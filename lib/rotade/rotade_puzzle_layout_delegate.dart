@@ -12,6 +12,12 @@ import 'package:very_good_slide_puzzle/rotade/rotade.dart';
 import 'package:very_good_slide_puzzle/theme/theme.dart';
 import 'package:very_good_slide_puzzle/typography/typography.dart';
 
+abstract class _TileSize {
+  static double small = 75;
+  static double medium = 100;
+  static double large = 112;
+}
+
 /// {@template simple_puzzle_layout_delegate}
 /// A delegate for computing the layout of the puzzle UI
 /// that uses a [RotadeTheme].
@@ -372,7 +378,7 @@ abstract class _TileFontSize {
 /// the font size of [tileFontSize] based on the puzzle [state].
 /// {@endtemplate}
 @visibleForTesting
-class RotadePuzzleTile extends StatelessWidget {
+class RotadePuzzleTile extends StatefulWidget {
   /// {@macro rotade_puzzle_tile}
   const RotadePuzzleTile({
     Key? key,
@@ -391,41 +397,70 @@ class RotadePuzzleTile extends StatelessWidget {
   final PuzzleState state;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
+  State<RotadePuzzleTile> createState() => _RotadePuzzleTileState();
+}
 
-    return TextButton(
-      style: TextButton.styleFrom(
-        primary: PuzzleColors.white,
-        textStyle: PuzzleTextStyle.headline2.copyWith(
-          fontSize: tileFontSize,
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(12),
+class _RotadePuzzleTileState extends State<RotadePuzzleTile>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: PuzzleThemeAnimationDuration.puzzleTileScale,
+    );
+
+    // Delay the initialization of the audio player for performance reasons,
+    // to avoid dropping frames when the theme is changed.
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = widget.state.puzzle.getDimension();
+    final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
+    const movementDuration = Duration(milliseconds: 800);
+
+    return AnimatedAlign(
+      duration: movementDuration,
+      alignment: FractionalOffset(
+        (widget.tile.currentPosition.x - 1) / (size - 1),
+        (widget.tile.currentPosition.y - 1) / (size - 1),
+      ),
+      child: TextButton(
+        style: TextButton.styleFrom(
+          primary: PuzzleColors.white,
+          textStyle: PuzzleTextStyle.headline2.copyWith(
+            fontSize: widget.tileFontSize,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(12),
+            ),
+          ),
+        ).copyWith(
+          foregroundColor: MaterialStateProperty.all(PuzzleColors.white),
+          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+            (states) {
+              if (widget.tile.value == widget.state.lastTappedTile?.value) {
+                return theme.pressedColor;
+              } else if (states.contains(MaterialState.hovered)) {
+                return theme.hoverColor;
+              } else {
+                return theme.defaultColor;
+              }
+            },
           ),
         ),
-      ).copyWith(
-        foregroundColor: MaterialStateProperty.all(PuzzleColors.white),
-        backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-          (states) {
-            if (tile.value == state.lastTappedTile?.value) {
-              return theme.pressedColor;
-            } else if (states.contains(MaterialState.hovered)) {
-              return theme.hoverColor;
-            } else {
-              return theme.defaultColor;
-            }
-          },
-        ),
-      ),
-      onPressed: null, // disable tapping on tile
-      child: Text(
-        tile.value.toString(),
-        semanticsLabel: context.l10n.puzzleTileLabelText(
-          tile.value.toString(),
-          tile.currentPosition.x.toString(),
-          tile.currentPosition.y.toString(),
+        onPressed: null, // disable tapping on tile
+        child: Text(
+          widget.tile.value.toString(),
+          semanticsLabel: context.l10n.puzzleTileLabelText(
+            widget.tile.value.toString(),
+            widget.tile.currentPosition.x.toString(),
+            widget.tile.currentPosition.y.toString(),
+          ),
         ),
       ),
     );
