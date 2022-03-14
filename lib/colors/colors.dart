@@ -85,4 +85,16 @@ abstract class PuzzleColors {
 
   /// Yellow 50
   static const Color yellow50 = Color(0xFF9E9400);
+
+  /// Purple primary
+  static const Color purplePrimary = Color(0xFFBB86FC);
+
+  /// DarkMode secondary
+  static const Color secondary = Color(0xFF03DAC6);
+
+  /// DarkMode background
+  static const Color background = Color(0xFF121212);
+
+  /// DarkMode variant primary
+  static const Color variantPrimary = Color(0xFF3700B3);
 }

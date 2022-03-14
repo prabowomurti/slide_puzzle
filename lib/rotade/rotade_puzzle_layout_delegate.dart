@@ -65,6 +65,7 @@ class RotadePuzzleLayoutDelegate extends PuzzleLayoutDelegate {
           height: 118,
           child: Image.asset(
             'assets/images/simple_dash_small.png',
+            colorBlendMode: BlendMode.screen,
             key: const Key('simple_puzzle_dash_small'),
           ),
         ),
@@ -442,9 +443,11 @@ class RotadePuzzleShuffleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
     return PuzzleButton(
       textColor: PuzzleColors.primary0,
-      backgroundColor: PuzzleColors.primary6,
+      backgroundColor:
+          theme is RotadeTheme ? PuzzleColors.secondary : PuzzleColors.primary6,
       onPressed: () => context.read<PuzzleBloc>().add(const PuzzleReset()),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -486,6 +489,7 @@ class _RotadeButton extends StatelessWidget {
           icon: const Icon(
             Icons.rotate_right,
             size: 20,
+            color: Colors.white,
           ),
           onPressed: () => context.read<PuzzleBloc>().add(TilesRotated(index)),
         );
@@ -493,6 +497,7 @@ class _RotadeButton extends StatelessWidget {
         return IconButton(
           icon: const Icon(
             Icons.rotate_right,
+            color: Colors.white,
           ),
           onPressed: () => context.read<PuzzleBloc>().add(TilesRotated(index)),
         );
@@ -500,6 +505,7 @@ class _RotadeButton extends StatelessWidget {
         return IconButton(
           icon: const Icon(
             Icons.rotate_right,
+            color: Colors.white,
           ),
           onPressed: () => context.read<PuzzleBloc>().add(TilesRotated(index)),
         );

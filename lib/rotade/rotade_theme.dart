@@ -19,16 +19,16 @@ class RotadeTheme extends PuzzleTheme {
   bool get hasTimer => false;
 
   @override
-  Color get nameColor => PuzzleColors.grey1;
+  Color get nameColor => PuzzleColors.white;
 
   @override
-  Color get titleColor => PuzzleColors.primary1;
+  Color get titleColor => PuzzleColors.white;
 
   @override
-  Color get backgroundColor => PuzzleColors.white;
+  Color get backgroundColor => PuzzleColors.background;
 
   @override
-  Color get defaultColor => PuzzleColors.primary5;
+  Color get defaultColor => PuzzleColors.secondary;
 
   @override
   Color get buttonColor => PuzzleColors.primary6;
@@ -40,10 +40,10 @@ class RotadeTheme extends PuzzleTheme {
   Color get pressedColor => PuzzleColors.primary7;
 
   @override
-  bool get isLogoColored => true;
+  bool get isLogoColored => false;
 
   @override
-  Color get menuActiveColor => PuzzleColors.grey1;
+  Color get menuActiveColor => PuzzleColors.secondary;
 
   @override
   Color get menuUnderlineColor => PuzzleColors.primary6;
