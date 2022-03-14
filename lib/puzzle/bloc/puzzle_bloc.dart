@@ -4,17 +4,15 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:very_good_slide_puzzle/models/models.dart';
 import 'package:very_good_slide_puzzle/rotade/rotade.dart';
-import 'package:very_good_slide_puzzle/simple/simple_theme.dart';
-import 'package:very_good_slide_puzzle/theme/themes/puzzle_theme.dart';
+import 'package:very_good_slide_puzzle/theme/theme.dart';
 
 part 'puzzle_event.dart';
 part 'puzzle_state.dart';
 
 class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
-  PuzzleBloc(this._size, {this.random, this.theme})
+  PuzzleBloc(this._size, {this.random, this.themeBloc})
       : super(const PuzzleState()) {
     on<PuzzleInitialized>(_onPuzzleInitialized);
     on<TileTapped>(_onTileTapped);
@@ -24,7 +22,9 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
 
   final int _size;
 
-  final PuzzleTheme? theme;
+  PuzzleTheme? theme;
+
+  final ThemeBloc? themeBloc;
 
   final Random? random;
 
@@ -143,8 +143,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
       }
     }
 
-    // TODO(prabowomurti): another workaround to determine current theme
-    final isRotadeTheme = state.lastTappedTile == null;
+    final isRotadeTheme = themeBloc!.state.theme is RotadeTheme;
 
     if (shuffle && !isRotadeTheme) {
       // Randomize only the current tile posistions.
